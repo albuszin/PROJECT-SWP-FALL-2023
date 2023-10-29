@@ -34,9 +34,10 @@ public class ConversationDAO {
             con = DBconnect.makeConnection();
             if (con != null) {
                 //2.create sql string
-                String sql = " SELECT [conversation_id], [product_id], [buyer_id], [seller_id]\n"
-                        + "    FROM [dbo].[conversation]\n"
-                        + "    WHERE [buyer_id] = ? OR [seller_id] = ?";
+                String sql = "SELECT [conversation_id], [product_id], [buyer_id], [seller_id]\n"
+                        + "FROM [dbo].[conversation]\n"
+                        + "WHERE [buyer_id] = ? OR [seller_id] = ?\n"
+                        + "ORDER BY [conversation_id] DESC";
                 //3.create stm obj
                 stm = con.prepareStatement(sql);
                 stm.setInt(1, user_id);
@@ -50,10 +51,10 @@ public class ConversationDAO {
                     int buyer_id = rs.getInt("buyer_id");
                     int seller_id = rs.getInt("seller_id");
 
-                    ConversationDTO conversation= new ConversationDTO(conversation_id, product_id, buyer_id, seller_id);
+                    ConversationDTO conversation = new ConversationDTO(conversation_id, product_id, buyer_id, seller_id);
                     if (this.ListOfConversation
                             == null) {
-                        this.ListOfConversation = new  ArrayList<>();
+                        this.ListOfConversation = new ArrayList<>();
                     }
                     this.ListOfConversation.add(conversation);
                 }
@@ -65,6 +66,51 @@ public class ConversationDAO {
 
             if (stm != null) {
                 con.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+    }
+
+    public void insertConversation(ConversationDTO conversationDTO) throws SQLException, ClassNotFoundException, NamingException {
+        Connection con = null;
+        PreparedStatement stm = null;
+        ResultSet rs = null;
+
+        try {
+            con = DBconnect.makeConnection();
+            if (con != null) {
+                String checkExistenceSql = "SELECT COUNT(*) AS count FROM [dbo].[conversation] WHERE [product_id] = ? AND [buyer_id] = ? AND [seller_id] = ?";
+
+                stm = con.prepareStatement(checkExistenceSql);
+                stm.setInt(1, conversationDTO.getProduct_id());
+                stm.setInt(2, conversationDTO.getBuyer_id());
+                stm.setInt(3, conversationDTO.getSeller_id());
+
+                rs = stm.executeQuery();
+                rs.next();
+                int count = rs.getInt("count");
+
+                if (count == 0) {
+                    String insertSql = "INSERT INTO [dbo].[conversation] ([product_id], [buyer_id], [seller_id]) VALUES (?, ?, ?)";
+
+                    stm = con.prepareStatement(insertSql);
+                    stm.setInt(1, conversationDTO.getProduct_id());
+                    stm.setInt(2, conversationDTO.getBuyer_id());
+                    stm.setInt(3, conversationDTO.getSeller_id());
+
+                    stm.executeUpdate();
+                } else {
+                    System.out.println("Conversation already exists with the same product_id, buyer_id, and seller_id.");
+                }
+            }
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (stm != null) {
+                stm.close();
             }
             if (con != null) {
                 con.close();

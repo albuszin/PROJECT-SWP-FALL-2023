@@ -141,13 +141,47 @@
                 </c:if>
 
             </c:forEach>
+                        <button id="shareButton">Chia sẻ</button>
+    <div class="popup" id="sharePopup">
+        <div class="popup-content">
+            <span onclick="closePopup()" style="float: right; cursor: pointer;">&times;</span>
+            <p id="shareURL">URL bài viết: </p>
+            <button id="copyButton">Copy Link</button>
+        </div>
+    </div>
 
 
 
 
         </div>
 
+
     </body>
+                 <script>
+        document.getElementById('shareButton').addEventListener('click', function() {
+            var shareURL = window.location.href; // URL của bài viết
+            var sharePopup = document.getElementById('sharePopup');
+            var shareURLDiv = document.getElementById('shareURL');
+            shareURLDiv.textContent = "URL bài viết: " + shareURL;
+            sharePopup.style.display = 'block';
+        });
+
+        document.getElementById('copyButton').addEventListener('click', function() {
+            var shareURL = window.location.href; // URL của bài viết
+            var tempInput = document.createElement('input');
+            tempInput.setAttribute('value', shareURL);
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            alert("URL đã được sao chép vào clipboard: " + shareURL);
+        });
+
+        function closePopup() {
+            var sharePopup = document.getElementById('sharePopup');
+            sharePopup.style.display = 'none';
+        }
+    </script>
     <link rel="stylesheet" href="assets/css/standar-style.css">
     <link rel="stylesheet" href="assets/css/forum-style-V3.css">
 </html>

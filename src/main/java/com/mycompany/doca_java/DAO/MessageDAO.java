@@ -27,32 +27,31 @@ public class MessageDAO {
         return ListOfMessage;
     }
 
-    public void getListMessageByConversationID(int conversation_id) 
-            throws SQLException, ClassNotFoundException, NamingException {
+    public void getListMessageByConversationID(int conversation_id) throws SQLException, ClassNotFoundException, NamingException {
         Connection con = null;
         PreparedStatement stm = null;
         ResultSet rs = null;
         try {
             con = DBconnect.makeConnection();
             if (con != null) {
-                //2.create sql string
-                String sql = " SELECT [conversation_id], [user_id], [messages_content], [messages_time]\n"
+                String sql = "SELECT [conversation_id], [user_id], [messages_content], [messages_time]\n"
                         + "FROM [dbo].[messages]\n"
-                        + "WHERE [conversation_id] = ?";
-                //3.create stm obj
+                        + "WHERE [conversation_id] = ?\n"
+                        + "ORDER BY [messages_time] ASC"; // Sort by messages_time in ascending order
+
                 stm = con.prepareStatement(sql);
                 stm.setInt(1, conversation_id);
-                //4.execute
+
                 rs = stm.executeQuery();
-                //5.process (Note: Luu y Khi SU DUNG IF/WHILE)
+
                 while (rs.next()) {
                     int user_id = rs.getInt("user_id");
                     String messages_content = rs.getString("messages_content");
                     Timestamp messages_time = rs.getTimestamp("messages_time");
 
-                    MessageDTO message= new MessageDTO(conversation_id, user_id, messages_content, messages_time);
-                    if (this.ListOfMessage
-                            == null) {
+                    MessageDTO message = new MessageDTO(conversation_id, user_id, messages_content, messages_time);
+
+                    if (this.ListOfMessage == null) {
                         this.ListOfMessage = new ArrayList<>();
                     }
                     this.ListOfMessage.add(message);
@@ -62,43 +61,42 @@ public class MessageDAO {
             if (rs != null) {
                 rs.close();
             }
-
             if (stm != null) {
-                con.close();
+                stm.close();
             }
             if (con != null) {
                 con.close();
             }
         }
     }
-    
+
     public void createMessage(MessageDTO message) throws SQLException, ClassNotFoundException, NamingException {
-    Connection con = null;
-    PreparedStatement stm = null;
-    try {
-        con = DBconnect.makeConnection();
-        if (con != null) {
-            // Create SQL string
-            String sql = "INSERT INTO [dbo].[messages] ([conversation_id], [user_id], [messages_content], [messages_time])"
-                       + " VALUES (?, ?, ?, ?)";
+        Connection con = null;
+        PreparedStatement stm = null;
+        try {
+            con = DBconnect.makeConnection();
+            if (con != null) {
+                // Create SQL string
+                String sql = "INSERT INTO [dbo].[messages] ([conversation_id], [user_id], [messages_content], [messages_time])"
+                        + " VALUES (?, ?, ?, ?)";
 
-            // Create stm obj
-            stm = con.prepareStatement(sql);
-            stm.setInt(1, message.getConversation_id());
-            stm.setInt(2, message.getUser_id());
-            stm.setString(3, message.getMessages_content());
-            stm.setTimestamp(4, message.getMessages_time());
+                // Create stm obj
+                stm = con.prepareStatement(sql);
+                stm.setInt(1, message.getConversation_id());
+                stm.setInt(2, message.getUser_id());
+                stm.setString(3, message.getMessages_content());
+                stm.setTimestamp(4, message.getMessages_time());
 
-            // Execute the query
-            stm.executeUpdate();
-        }
-    } finally {
-        if (stm != null) {
-            stm.close();
-        }
-        if (con != null) {
-            con.close();
+                // Execute the query
+                stm.executeUpdate();
+            }
+        } finally {
+            if (stm != null) {
+                stm.close();
+            }
+            if (con != null) {
+                con.close();
+            }
         }
     }
-}
 }

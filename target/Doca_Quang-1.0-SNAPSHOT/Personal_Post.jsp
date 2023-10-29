@@ -130,7 +130,7 @@
                                 <div role="tabpanel" class="tab-pane fade " id="waiting">
                                     <c:set var="countWaiting" value="0" />
                                     <c:forEach items="${listPostOfPersonal}" var="post">
-                                        <c:if test="${post.status eq 'wating'}">
+                                        <c:if test="${post.status eq 'pending'}">
                                             <c:set var="countWaiting" value="${count + 1}" />
                                              <c:set var="countDisplay" value="${count + 1}" />
                                             <img class="col-sm-6 image-content mt-5 img-fluid"

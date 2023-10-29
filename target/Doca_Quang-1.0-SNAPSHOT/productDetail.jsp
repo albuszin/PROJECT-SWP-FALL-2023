@@ -47,7 +47,7 @@
     <body>
         <c:set var="product" value="${requestScope.productDetail}" />
         <c:set var="category" value="${requestScope.category}" />
-     
+
         <jsp:include page="header.jsp" />
         <div class="main-content">
             <div class="row row-content justify-content-center">
@@ -55,7 +55,7 @@
                     <div class="container pt-5">
                         <div class="row">
                             <div class="col">
-                                
+
                                 <c:set var="img" value="${product.productImage}"/>
                                 <img class="" src=${img} alt="">
                                 <div class="product_info">
@@ -81,7 +81,7 @@
                                         <div class="profile-image-container">
                                             <img src="${owner.avatar}" alt="Profile Image" class="rounded-circle profile-image">
                                         </div>
-                                        
+
                                         <h6 class="userName mt-2">${owner.userName}</h6>
                                     </a>
                                 </div>
@@ -90,7 +90,10 @@
                                             id="sellerPhone">hiện số người bán</button>
 
                                     <br><button class="btn btn-outline-secondary bg-light btn-block text-success mt-2">
-                                        <i class="fa fa-comments"></i> chat với người bán</button>
+                                        <a href="CreateConversation?ProductID=${product.productId}&sellerID=${product.userId}" >
+                                            <i class="fa fa-comments"></i> chat với người bán
+                                        </a>
+                                    </button>
                                 </div>
 
                             </div>
@@ -113,9 +116,9 @@
 
         <script>
             var button = document.getElementById("sellerPhone");
-             var owner = {
-        mobileNum: ${owner.mobileNum}
-    };
+            var owner = {
+                mobileNum: ${owner.mobileNum}
+            };
             button.addEventListener("click", function () {
                 button.textContent = owner.mobileNum; // Change the text when clicked
             });

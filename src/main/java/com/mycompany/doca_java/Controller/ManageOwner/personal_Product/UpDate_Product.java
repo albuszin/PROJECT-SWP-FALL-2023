@@ -78,7 +78,7 @@ public class UpDate_Product extends HttpServlet {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
             String timestamp = dateFormat.format(new Date());
 // Lấy phần tên file gốc
-            String uploadDir = "C:\\Users\\Admin\\Desktop\\FOR STUDY\\SWP\\Doca_java\\src\\main\\webapp\\imgIn_DOCA";
+            String uploadDir = "C:\\Users\\ADMIN\\OneDrive\\Documents\\NetBeansProjects\\Doca_Quang\\src\\main\\webapp\\imgIn_DOCA";
             String fileName = null;
             Part filePart = request.getPart("file");
 

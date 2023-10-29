@@ -106,7 +106,7 @@ public class PostPorductV2 extends HttpServlet {
             LocalDateTime currentDateTime = LocalDateTime.now();
             // Chuyển đổi thành kiểu dữ liệu Timestamp
             Timestamp timePosted = Timestamp.valueOf(currentDateTime);
-            String uploadDir = "C:\\Users\\Admin\\Desktop\\FOR STUDY\\SWP\\Doca_java\\src\\main\\webapp\\imgIn_DOCA";
+            String uploadDir = "C:\\Users\\ADMIN\\OneDrive\\Documents\\NetBeansProjects\\Doca_Quang\\src\\main\\webapp\\imgIn_DOCA";
             String fileName = null;
 // Lấy ngày và giờ hiện tại
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");

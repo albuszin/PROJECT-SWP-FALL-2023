@@ -4,66 +4,66 @@
  */
 package com.mycompany.doca_java.Controller.Chat;
 
-
-import com.mycompany.doca_java.DAO.MessageDAO;
-import com.mycompany.doca_java.DTO.MessageDTO;
+import com.mycompany.doca_java.DAO.ConversationDAO;
+import com.mycompany.doca_java.DTO.ConversationDTO;
+import com.mycompany.doca_java.DTO.userDTO;
 import jakarta.servlet.RequestDispatcher;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.websocket.OnClose;
-import jakarta.websocket.OnMessage;
-import jakarta.websocket.OnOpen;
-import jakarta.websocket.Session;
-import jakarta.websocket.server.ServerEndpoint;
+import jakarta.servlet.http.HttpSession;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import javax.naming.NamingException;
 
 /**
  *
- * @author Admin
+ * @author ADMIN
  */
-@ServerEndpoint(value = "/websocket")
-public class WebSocketServlet extends HttpServlet {
+@WebServlet(name = "CreateConversation", urlPatterns = {"/CreateConversation"})
+public class CreateConversation extends HttpServlet {
 
-    public static final String CHAT_PAGE = "Chat.jsp";
-    private static List<MessageDTO> listOfMessage = new ArrayList<>();
+    private final String GET_CONVERSATIONLIST = "getConversationServlet";
 
-    @OnOpen
-    public void onOpen(Session session) {
-        WebSocketSessionManager.addSession(session);
-    }
-
-    @OnMessage
-    public void onMessage(String message, Session session) throws IOException {
-        WebSocketSessionManager.sendMessageToAll(message);
-    }
-
-    @OnClose
-    public void onClose(Session session) {
-        WebSocketSessionManager.removeSession(session);
-    }
-
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        int conversation_id = Integer.parseInt(request.getParameter("conversationID"));
         String url = "";
+        HttpSession session = request.getSession();
+        int ProductID = Integer.parseInt(request.getParameter("ProductID"));
+        userDTO account = (userDTO) session.getAttribute("USER_NAME");
+        int buyerID = account.getUser_ID();
+        int sellerID = Integer.parseInt(request.getParameter("sellerID"));
         try {
-            MessageDAO dao = new MessageDAO();
-            dao.getListMessageByConversationID(conversation_id);
-            List<MessageDTO> ListOfMessage = dao.getListOfMessage();
-            if (ListOfMessage != null) {
-                request.setAttribute("ListOfMessage", ListOfMessage);
+            ConversationDTO NewConversation = new ConversationDTO(ProductID, buyerID, sellerID);
+            //check if the conversation have exited
+            ConversationDAO dao = new ConversationDAO();
+            dao.getListTheConversationByUserID(account.getUser_ID());
+            List<ConversationDTO> ListOfConversation = dao.getListOfConversation();
+            int count = 0;
+            for (ConversationDTO conversationDTO : ListOfConversation) {
+                if (conversationDTO.getProduct_id() == NewConversation.getBuyer_id()) {
+                    count++;
+                }
             }
-            request.setAttribute("stateConvers", conversation_id);
-            url = CHAT_PAGE;
+            if (count == 0) {
+                dao.insertConversation(NewConversation);
+            }
+            url = GET_CONVERSATIONLIST;
+
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
         } catch (NamingException ex) {
@@ -76,7 +76,7 @@ public class WebSocketServlet extends HttpServlet {
         }
     }
 
-// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *

@@ -103,7 +103,10 @@
                         <li class="list-group-item"><a href="getPersonalProduct" style="color: black;">quản lý sản phẩm</a>
                         </li>
                         <li class="list-group-item"><a href="ListProductSaved" style="color: black;">tin đã lưu</a></li>
-                        <li class="list-group-item"> <a href="" style="color: black;">logout</a></li>
+                        <form action="DispatchServlet">
+                            <input type="submit" value="Logout" name="btAction" style="background-color: #007BFF; color: #fff; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;" />
+                        </form>
+
                     </ul>
 
                 </div>
